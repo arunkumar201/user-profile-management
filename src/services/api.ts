@@ -31,54 +31,59 @@ export async function getAllProfiles(): Promise<TProfile[]> {
     throw new Error('Failed to fetch profiles');
   }
 }
-export async function saveProfile(profile: Omit<TProfile, 'id'>): Promise<TProfile> {
-  const isUserExists = await getProfile(profile.email);
+export async function saveProfile(
+	profile: Omit<TProfile, "id">
+): Promise<TProfile> {
+	const isUserExists = await getProfile(profile.email);
 
-  if (isUserExists) { 
-    throw new Error('User already exists');
-  }
-  
-  try {
-    const id = generateId();
-    const response = await fetch(`${API_BASE_URL}/profiles`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ ...profile, id }),
-    });
-    
-    if (!response.ok) {
-      throw new Error('Failed to save profile');
-    }
-    const savedProfile = await response.json();
-    console.debug("🚀 ~ saveProfile ~ savedProfile:", savedProfile);
-    return savedProfile;
-  } catch (error) {
-    console.error('Error saving profile:', error);
-    throw new Error('Failed to save profile');
-  }
+	if (isUserExists) {
+		throw new Error("User already exists");
+	}
+
+	try {
+		const id = generateId();
+		const response = await fetch(`${API_BASE_URL}/profiles`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ ...profile, id }),
+		});
+
+		if (!response.ok) {
+			throw new Error("Failed to save profile");
+		}
+		const savedProfile = await response.json();
+		console.debug("🚀 ~ saveProfile ~ savedProfile:", savedProfile);
+		return savedProfile;
+	} catch (error) {
+		console.error("Error saving profile:", error);
+		throw new Error("Failed to save profile");
+	}
 }
 
-export async function updateProfile(id: string, profile: Omit<TProfile, 'id'>): Promise<TProfile> {
-  try {
-    const response = await fetch(`${API_BASE_URL}/profiles/${id}`, {
+export async function updateProfile(
+	id: string,
+	profile: Omit<TProfile, "id" | "email">
+): Promise<TProfile> {
+	try {
+		const response = await fetch(`${API_BASE_URL}/profiles/${id}`, {
 			method: "PUT",
 			headers: {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({ ...profile }),
 		});
-    
-    if (!response.ok) {
-      throw new Error('Failed to update profile');
-    }
-    
-    return response.json();
-  } catch (error) {
-    console.error('Error updating profile:', error);
-    throw new Error('Failed to update profile');
-  }
+
+		if (!response.ok) {
+			throw new Error("Failed to update profile");
+		}
+
+		return response.json();
+	} catch (error) {
+		console.error("Error updating profile:", error);
+		throw new Error("Failed to update profile");
+	}
 }
 
 export async function deleteProfile(id: string): Promise<void> {

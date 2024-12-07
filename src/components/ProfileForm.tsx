@@ -1,34 +1,33 @@
 import { useState, useCallback, FormEvent, useEffect, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
-import { saveProfile, updateProfile } from "../services/api";
 import { toast } from "react-hot-toast";
 import { z } from "zod";
-import { TProfile, ZProfile } from "../schema";
+import { ZProfile } from "../schema";
 import { useProfile } from "../hooks/useProfile";
 import { wait } from "../utils";
 import { InputField } from "./InputFormField";
 
 function UserProfileForm() {
-	const navigate = useNavigate();
-	const { profile, setProfile, loading, setLoading, setError } = useProfile();
+	const { profile, loading, saveUserProfile, updateUserProfile } = useProfile();
 	const [errors, setErrors] = useState<Record<string, string>>({});
+	const [saving, setSaving] = useState(false);
 
-const initialFormData = useMemo(
-	() => ({
-		firstName: profile?.firstName || "",
-		lastName: profile?.lastName || "",
-		email: profile?.email || "",
-		age: profile?.age ? profile.age.toString() : "",
-	}),
-	[profile]
-);
+	const initialFormData = useMemo(
+		() => ({
+			firstName: profile?.firstName || "",
+			lastName: profile?.lastName || "",
+			email: profile?.email || "",
+			age: profile?.age ? profile.age.toString() : "",
+		}),
+		[profile]
+	);
 
 	const [formData, setFormData] = useState(initialFormData);
-	const isFormChanged = JSON.stringify(formData) !== JSON.stringify(initialFormData);
-  
-  useEffect(() => {
-    setFormData(initialFormData);
-  }, [initialFormData]);
+	const isFormChanged =
+		JSON.stringify(formData) !== JSON.stringify(initialFormData);
+
+	useEffect(() => {
+		setFormData(initialFormData);
+	}, [initialFormData]);
 
 	const handleInputChange = useCallback((field: string, value: string) => {
 		setFormData((prev) => ({ ...prev, [field]: value }));
@@ -45,7 +44,6 @@ const initialFormData = useMemo(
 			setErrors(formattedErrors);
 		} else {
 			toast.error(error.message ?? "Failed to save profile");
-			setError(error.message ?? "Failed to save profile");
 		}
 	};
 
@@ -55,9 +53,7 @@ const initialFormData = useMemo(
 			toast.error("No changes detected.");
 			return;
 		}
-  
-		setLoading(true);
-		setError(null);
+		setSaving(true);
 		try {
 			const validatedData = await ZProfile.omit({ id: true }).parseAsync({
 				...formData,
@@ -65,20 +61,18 @@ const initialFormData = useMemo(
 			});
 
 			await wait(1);
-			let savedProfile: TProfile;
 			if (profile?.id) {
-				savedProfile = await updateProfile(profile.id, validatedData);
+				delete (validatedData as { email?: string }).email;
+				delete (validatedData as { id?: string }).id;
+				console.log("Updating profile:", validatedData);
+				await updateUserProfile(profile.id, validatedData);
 			} else {
-				savedProfile = await saveProfile(validatedData);
-				localStorage.setItem("user-email", savedProfile.email.toLowerCase());
+				await saveUserProfile(validatedData);
 			}
-			setProfile(savedProfile);
-			toast.success("Profile saved successfully!");
-			navigate("/profile");
 		} catch (error) {
 			handleErrors(error as z.ZodError | Error);
 		} finally {
-			setLoading(false);
+			setSaving(false);
 		}
 	};
 
@@ -124,7 +118,7 @@ const initialFormData = useMemo(
 					type="submit"
 					disabled={loading || !isFormChanged}
 					className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
-						loading || !isFormChanged ? "opacity-50" : ""
+						loading || saving || !isFormChanged ? "opacity-50" : ""
 					}`}
 				>
 					{loading ? "Saving..." : "Save Profile"}
