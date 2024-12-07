@@ -21,6 +21,10 @@ A React TypeScript application for managing user profiles with features like for
 - pnpm
 
 ## Installation
+1. install pnpm
+```bash 
+npm install -g pnpm
+```
 
 2. Install dependencies:
 
@@ -31,18 +35,11 @@ pnpm install
 
 ## Running the Application
 
-1. Start the JSON Server (API):
+1. Start the JSON Server (API) &  start the prod server:
 ```bash
-pnpm run server
+pnpm run preview
 ```
-
-
-2. In a new terminal, start the development server:
-```bash
-pnpm run start:dev
-```
-
-The application will be available at `http://localhost:5173`
+The application will be available at `http://localhost:4173`
 
 ## Environment Variables
 
