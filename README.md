@@ -46,7 +46,7 @@ The application will be available at `http://localhost:5173`
 
 ## Environment Variables
 
-The application uses different environment variables for development and production:
+The application uses different environment variables for development and production use example `.env.example` file:
 
 - `.env.development` - Development environment configuration
 - `.env.production` - Production environment configuration
