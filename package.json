@@ -7,10 +7,10 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
     "start:dev": "NODE_ENV=development vite",
     "start:prod": "NODE_ENV=production vite",
-    "server": "npx json-server --watch db.json --port 3000"
+    "server": "npx json-server --watch db.json --port 3000",
+    "preview": "npx concurrently \"pnpm run server\" \"vite preview\""
   },
   "dependencies": {
     "lucide-react": "^0.344.0",

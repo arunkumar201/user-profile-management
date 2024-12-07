@@ -1,3 +1,17 @@
 {
-  "profiles": []
+  "profiles": [
+    {
+      "firstName": "Arun",
+      "lastName": "prajapati",
+      "email": "arunprajapati9825@gmail.com",
+      "age": 19,
+      "id": "49365023-02f6-494c-9336-7acdfd2cdf33"
+    },
+    {
+      "id": "edb9a17c-5d1b-4838-acb4-d72a3378dca9",
+      "firstName": "Arun",
+      "lastName": "Kumar",
+      "email": "arunprajapat825@gmail.com"
+    }
+  ]
 }
