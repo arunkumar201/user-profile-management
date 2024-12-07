@@ -1,7 +1,7 @@
 import { TProfile } from '../schema';
 import { generateId } from '../utils/generateId';
 
-const API_BASE_URL = "https://json-server-ccgh.onrender.com"; 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; 
 
 export async function getProfile(email: string): Promise<TProfile> {
   try {
